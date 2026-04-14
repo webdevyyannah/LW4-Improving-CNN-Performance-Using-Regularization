@@ -200,3 +200,11 @@ model weaknesses — if the heatmap shows the model focusing on irrelevant backg
 regions rather than the tree itself, this signals a need for better training data or
 architectural improvements. Without explainability, even a high-accuracy model remains a
 black box that cannot be fully trusted or debugged in production environments.
+
+
+
+## 🔗 Project Links
+
+- 📓 **Google Colab Notebook:** [(https://colab.research.google.com/drive/1NS9U3BdP1vPjw-eY-QPirv5oLIR76Yf_?usp=sharing)] 
+- 📁 **Google Drive Dataset:** [(https://drive.google.com/drive/folders/1TRQJ9ZjW8XNAK6L1VdbcqLDDwcdhuwcO?usp=sharing)]
+- 🧠 **Saved Model:** [(https://drive.google.com/file/d/19L1TODQCLFHRFOioXjQewesOzPX2qbG1/view?usp=drive_link)]
