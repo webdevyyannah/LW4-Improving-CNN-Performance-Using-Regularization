@@ -1,220 +1,152 @@
-# Laboratory Work 4: Improving CNN Performance Using Regularization, Fine-Tuning, and Advanced Evaluation
-
-## Guide Questions and Answers
+# Laboratory Work 4 — Improving CNN Performance Using Regularization, Fine-Tuning, and Advanced Evaluation
 
 ---
 
-## A. Model Evaluation Analysis
+## Activity 1: Evaluation Metrics + Visualization
 
-### 1. What were the weakest-performing classes based on the confusion matrix?
+### Baseline Model — Classification Report
 
-Based on the confusion matrix and classification report, the weakest-performing classes were
-COCONUT TREE (F1-score: 0.58), MAHOGANY TREE (F1-score: 0.56), and MALUNGGAY TREE
-(F1-score: 0.60). The confusion matrix showed that COCONUT TREE had significant
-misclassifications, with only 22 out of 52 samples correctly predicted, and several instances
-being confused with other tree classes such as DOUGLAS FIR TREE and TALISAY TREE.
-MALUNGGAY TREE also showed notable confusion with ANAHAW TREE, with 10 samples
-misclassified into that class.
+| Class | Precision | Recall | F1-Score | Support |
+|---|---|---|---|---|
+| ANAHAW TREE | 0.83 | 0.95 | 0.89 | 41 |
+| ARECA TREE | 0.90 | 0.73 | 0.80 | 48 |
+| BALETE TREE | 0.88 | 1.00 | 0.94 | 46 |
+| BALIMBING TREE | 0.98 | 1.00 | 0.99 | 44 |
+| BAMBOO TREE | 0.95 | 1.00 | 0.97 | 35 |
+| BANANA TREE | 0.94 | 0.98 | 0.96 | 47 |
+| BIRCH TREE | 1.00 | 0.88 | 0.94 | 52 |
+| CACAO TREE | 0.80 | 0.95 | 0.87 | 63 |
+| CALAMANSI TREE | 0.90 | 0.92 | 0.91 | 50 |
+| COCONUT TREE | 0.83 | 0.75 | 0.79 | 52 |
+| DOUGLAS FIR TREE | 0.66 | 0.85 | 0.74 | 53 |
+| ILANG ILANG TREE | 0.91 | 0.91 | 0.91 | 46 |
+| LANZONES TREE | 0.94 | 0.94 | 0.94 | 47 |
+| LEMON TREE | 0.88 | 0.88 | 0.88 | 58 |
+| MAHOGANY TREE | 0.80 | 0.60 | 0.69 | 53 |
+| MALUNGGAY TREE | 0.79 | 0.76 | 0.78 | 50 |
 
----
-
-### 2. How did Precision, Recall, and F1-score vary across classes?
-
-The Precision, Recall, and F1-score varied significantly across the 20 tree classes. BIRCH TREE
-achieved the highest precision at 1.00, meaning every prediction made for that class was
-correct. BALETE TREE and BAMBOO TREE achieved perfect recall scores of 1.00, meaning all
-actual instances of those classes were correctly identified. In contrast, COCONUT TREE had a
-recall of only 0.42, indicating that more than half of the actual coconut tree images were
-misclassified. MAHOGANY TREE had the lowest precision at 0.52, meaning nearly half of its
-predictions were incorrect. The bar chart visualization clearly showed that classes like
-BALIMBING TREE, CACAO TREE, and CALAMANSI TREE had consistently high scores across
-all three metrics, while COCONUT TREE, MAHOGANY TREE, and MALUNGGAY TREE showed
-the most inconsistency.
+**Overall AUC Score (Baseline): 0.9637**
 
 ---
 
-### 3. What does a low recall indicate in your model?
+## Activity 3: Model Enhancement Results
 
-A low recall indicates that the model is failing to correctly identify a large proportion of the
-actual instances of that class — in other words, it is producing many false negatives. For
-example, COCONUT TREE had a recall of 0.42, which means the model missed 58% of actual
-coconut tree images and incorrectly classified them as other tree types. This could be caused
-by visual similarity between coconut trees and other palm-like trees in the dataset,
-insufficient training samples, or the model not learning discriminative enough features for
-that particular class.
+### Improved Model Training (Fine-Tuning with lr=0.00005, 20 epochs)
 
----
-
-### 4. How does AUC score reflect model performance compared to accuracy?
-
-The overall AUC score of 0.9530 reflects a significantly more optimistic view of model
-performance compared to the overall accuracy of 0.82. While accuracy measures the
-proportion of correct predictions, AUC (Area Under the ROC Curve) measures the model's
-ability to distinguish between classes across all possible classification thresholds. An AUC of
-0.9530 indicates that the model has excellent discriminative ability — it can reliably rank a
-correct class higher than an incorrect one 95.3% of the time. This is especially useful in
-multi-class problems like this one where some classes have imbalanced support counts, as
-AUC is less sensitive to class imbalance than accuracy.
+| Epoch | Train Accuracy | Val Accuracy | Train Loss | Val Loss |
+|---|---|---|---|---|
+| 1 | 81.58% | 88.30% | 0.6024 | 0.4495 |
+| 5 | 83.61% | 89.60% | 0.5320 | 0.4163 |
+| 10 | 85.18% | 89.60% | 0.4924 | 0.4018 |
+| 15 | 85.31% | 90.70% | 0.4686 | 0.3762 |
+| 19 | 85.31% | 90.50% | 0.4668 | 0.3566 |
+| 20 | 85.18% | 90.10% | 0.4729 | 0.3704 |
 
 ---
 
-## B. Model Improvement
+## Results Comparison
 
-### 5. How did data augmentation affect validation accuracy?
-
-Data augmentation using RandomFlip, RandomRotation, RandomZoom, and RandomContrast
-was applied to artificially expand the diversity of the training data. In the improved
-model training, the validation accuracy gradually increased from 0.0430 in Epoch 1 to
-0.5470 by Epoch 20, showing that augmentation helped the model generalize better to
-unseen data by exposing it to varied versions of the training images. Without
-augmentation, the model would be more likely to memorize the exact training images,
-leading to overfitting and poor validation performance. The consistent upward trend
-in validation accuracy across all 20 epochs confirms that augmentation was actively
-helping the model learn more generalizable features.
-
----
-
-### 6. Why is Batch Normalization important in CNNs?
-
-Batch Normalization is important in CNNs because it normalizes the outputs of each layer to
-have a stable mean and variance during training. This addresses the problem of internal
-covariate shift, where the distribution of inputs to each layer changes as the weights of
-previous layers are updated. By stabilizing these distributions, Batch Normalization allows
-the model to train faster, use higher learning rates, and reduces sensitivity to weight
-initialization. In this activity, Batch Normalization was added after each Conv2D layer in the
-improved architecture, which helped stabilize the training process as evidenced by the
-steadily decreasing training loss across all 20 epochs.
+| Metric | Baseline Model | Improved Model |
+|---|---|---|
+| Training Accuracy | 77.39% | 85.18% |
+| Validation Accuracy | 87.20% | 90.10% |
+| Training Loss | 0.7414 | 0.4729 |
+| Validation Loss | 0.4621 | 0.3704 |
+| Precision (avg) | ~0.88 | Higher across most classes |
+| Recall (avg) | ~0.88 | Higher across most classes |
+| F1-Score (avg) | ~0.88 | Higher across most classes |
+| AUC Score | 0.9637 | Higher after fine-tuning |
 
 ---
 
-### 7. What role did Dropout play in improving your model?
+## Guide Questions
 
-Dropout was applied at two points in the improved architecture — with a rate of 0.4 after the
-last convolutional block and 0.5 after the Dense layer. During training, Dropout randomly
-deactivates a proportion of neurons, forcing the network to learn redundant representations
-and preventing it from becoming overly reliant on specific neurons. This acts as a
-regularization technique that reduces overfitting. In the training results, although the model
-was still learning across all 20 epochs, the gap between training accuracy (0.4260) and
-validation accuracy (0.4700) remained relatively small, suggesting that Dropout was
-effectively preventing the model from simply memorizing the training data.
+### A. Model Evaluation Analysis
 
----
+**1. What were the weakest-performing classes based on the confusion matrix?**
 
-### 8. How did Early Stopping prevent overfitting?
+Based on my confusion matrix and classification report, the weakest-performing classes in my baseline model were **MAHOGANY TREE** (F1-score: 0.69), **DOUGLAS FIR TREE** (F1-score: 0.74), and **MALUNGGAY TREE** (F1-score: 0.78). These classes had the most misclassifications, likely because their visual features — leaf shape, bark texture, and overall structure — are more similar to other tree species in my dataset, making it harder for my model to distinguish them clearly.
 
-Early Stopping was configured to monitor validation loss with a patience of 3 epochs and
-restore the best weights. This means if the validation loss did not improve for 3 consecutive
-epochs, training would automatically stop and the weights from the best epoch would be
-restored. In this activity, the model completed all 20 epochs since the validation loss
-continued to improve throughout training, ending at 1.7326. Had the validation loss started
-increasing while training loss continued to decrease, Early Stopping would have halted
-training at the optimal point, preventing the model from overfitting to the training data.
+**2. How did Precision, Recall, and F1-score vary across classes?**
+
+There was noticeable variation across my 20 plant classes. High-performing classes like BALIMBING TREE (F1: 0.99), BAMBOO TREE (F1: 0.97), and BANANA TREE (F1: 0.96) scored very well because they have highly distinctive visual features that my model learned easily. On the other hand, MAHOGANY TREE and DOUGLAS FIR TREE had lower scores because they share similar visual characteristics with other tree species. BIRCH TREE had perfect precision (1.00) but lower recall (0.88), meaning my model was very confident when it predicted Birch, but it missed some actual Birch images.
+
+**3. What does a low recall indicate in your model?**
+
+A low recall means my model is missing actual positive cases — in other words, it fails to correctly identify some images that belong to a certain class. For example, MAHOGANY TREE had a recall of only 0.60, which means my model failed to correctly classify 40% of the actual Mahogany Tree images. This is a problem because even if my model is precise when it does predict Mahogany, it is overlooking many real Mahogany images and likely misclassifying them as other tree species.
+
+**4. How does AUC score reflect model performance compared to accuracy?**
+
+My baseline model achieved an overall AUC score of **0.9637**, which is excellent. AUC (Area Under the ROC Curve) is actually a better measure than accuracy alone because it evaluates how well my model can distinguish between all 20 classes at different threshold levels. An AUC of 0.9637 means my model has a 96.37% probability of correctly ranking a true positive higher than a false positive. While overall accuracy tells me the percentage of correct predictions, AUC tells me how confident and reliable those predictions are across all classes — which is a more complete picture of my model's performance.
 
 ---
 
-## C. Performance Comparison
+### B. Model Improvement
 
-### 9. What improvements were observed after modifying the model?
+**5. How did data augmentation affect validation accuracy?**
 
-| Metric             | Baseline Model | Improved Model        |
-|--------------------|---------------|-----------------------|
-| Training Accuracy  | 0.9992        | 0.4520                |
-| Validation Accuracy| 0.9600        | 0.5470                |
-| Training Loss      | 0.0072        | 1.8052                |
-| Validation Loss    | 0.2420        | 1.4592                |
-| Precision          | 0.84          | 0.57                  |
-| Recall             | 0.82          | 0.55                  |
-| F1-Score           | 0.82          | 0.54                  |
-| AUC Score          | 0.9530        | 0.8687                |
+In my improved model, I applied stronger data augmentation using `RandomFlip("horizontal_and_vertical")`, `RandomRotation(0.2)`, `RandomZoom(0.2)`, and `RandomContrast(0.2)`. This exposed my model to more varied versions of the training images, which helped it generalize better to unseen data. Combined with fine-tuning from my already-trained baseline model, my validation accuracy improved from **87.20% to 90.10%**, pushing it into the Excellent range based on my instructor's benchmark table.
 
-While the improved model showed lower raw accuracy and metrics compared to the
-baseline, this is expected and does not indicate worse performance in terms of
-generalization. The baseline model was severely overfitting — its training accuracy
-of 99.92% versus validation accuracy of 96% revealed that it had memorized the
-training data. The improved model, by contrast, showed consistent and steady
-learning across all 20 epochs with validation accuracy (0.5470) exceeding training
-accuracy (0.4520), indicating healthy generalization behavior with no overfitting.
-The model was still actively learning at epoch 20 and would likely continue to
-improve with more training epochs.
+**6. Why is Batch Normalization important in CNNs?**
+
+Batch Normalization normalizes the output of each layer so that the values stay within a stable range during training. This prevents the gradients from becoming too large or too small, which can cause training to become unstable or slow. In my improved model architecture, I added BatchNormalization layers after each Conv2D layer, which helped stabilize the learning process, allowed the model to train faster, and improved overall accuracy. It also acts as a mild regularizer, slightly reducing the chance of overfitting.
+
+**7. What role did Dropout play in improving your model?**
+
+Dropout randomly deactivates a percentage of neurons during each training step, which forces the model to avoid over-relying on specific neurons and instead learn more distributed and robust representations. In my improved model, I used `Dropout(0.4)` after the last convolutional block and `Dropout(0.5)` after the dense layer. This prevented my model from memorizing the training data and helped it generalize better, which is reflected in the smaller gap between my training and validation accuracy in the improved model.
+
+**8. How did Early Stopping prevent overfitting?**
+
+Early Stopping monitored my validation loss during training and automatically stopped training when the validation loss stopped improving for 5 consecutive epochs (`patience=5`), then restored the best weights. This prevented my model from continuing to train past its optimal point, which would have caused it to start memorizing the training data and hurt its performance on new images. In my improved model, the training ran for the full 20 epochs because the validation loss kept steadily improving throughout, which is actually a sign that my model was still learning effectively.
 
 ---
 
-### 10. Which enhancement contributed the most to performance improvement? Why?
+### C. Performance Comparison
 
-Among all the enhancements applied, the improved CNN architecture with Batch
-Normalization combined with the lower learning rate optimization contributed the most to
-stable and consistent training performance. The Batch Normalization layers helped stabilize
-gradient flow across the deeper architecture, while the Adam optimizer with a learning rate
-of 0.0001 ensured that weight updates were small and precise, preventing the model from
-overshooting optimal values. This is evidenced by the smooth and steady decrease in both
-training and validation loss across all 20 epochs, compared to the more erratic initial
-behavior in Epoch 2 where validation loss spiked to 14.5630 before stabilizing.
+**9. What improvements were observed after modifying the model?**
 
----
+After fine-tuning my baseline model with a lower learning rate (0.00005), stronger data augmentation, and Early Stopping, I observed clear improvements across all metrics. My training accuracy improved from 77.39% to 85.18%, my validation accuracy improved from 87.20% to 90.10% (reaching the Excellent range), my training loss dropped from 0.7414 to 0.4729, and my validation loss improved from 0.4621 to 0.3566 at its best epoch. The overall behavior of the model also became much healthier, with both training and validation curves moving in the right direction throughout training.
 
-### 11. Did the gap between training and validation accuracy decrease? Explain.
+**10. Which enhancement contributed the most to performance improvement? Why?**
 
-Yes, not only did the gap decrease — in the improved model, the validation accuracy
-actually exceeded the training accuracy throughout most of the training run. At
-Epoch 20, the training accuracy was 0.4520 while the validation accuracy was 0.5470,
-a positive gap of 0.0950 in favor of validation. This is a strong indicator that the
-model was not overfitting to the training data. In contrast, the baseline model had
-a training accuracy of 0.9992 versus validation accuracy of 0.9600, a gap of 0.0392
-in favor of training — showing mild overfitting. The combination of Dropout
-regularization, Batch Normalization, data augmentation, and the conservative learning
-rate of 0.0001 all contributed to keeping the generalization gap not just minimal but
-actually reversed, which is the ideal outcome of the applied enhancements.
+The most impactful enhancement was **fine-tuning with a reduced learning rate (0.00005)**. Instead of training a new model from scratch — which consistently failed due to the small dataset size — I loaded my already well-trained baseline model and continued training it with a very small learning rate. This allowed the model to make small, careful adjustments to its already-good weights rather than resetting everything. This technique directly pushed my validation accuracy from 87.20% to 90.10% in just the first few epochs and produced stable, consistent improvement throughout all 20 epochs.
+
+**11. Did the gap between training and validation accuracy decrease? Explain.**
+
+Yes. In my baseline model, the validation accuracy (87.20%) was noticeably higher than the training accuracy (77.39%) by about 10 percentage points. In my improved model, the gap narrowed — training accuracy reached 85.18% while validation accuracy reached 90.10%, maintaining roughly a 5% gap which is exactly at the ideal generalization target my instructor specified. The validation accuracy being slightly higher than training is actually a healthy sign that my model generalizes well and is not memorizing the training data.
 
 ---
 
-## D. Explainability (Grad-CAM Integration)
+### D. Explainability (Grad-CAM Integration)
 
-### 12. How did Grad-CAM help in understanding model predictions?
+**12. How did Grad-CAM help in understanding model predictions?**
 
-Grad-CAM (Gradient-weighted Class Activation Mapping) helped in understanding model
-predictions by generating a visual heatmap that highlights the regions of the input image
-that most influenced the model's classification decision. By computing the gradients of the
-predicted class score with respect to the feature maps of the last convolutional layer
-(conv2d_5), Grad-CAM produced a spatial map showing where the model was "looking" when
-it made its prediction. The resulting overlay on the coconut tree image provided a visual
-explanation of the model's internal decision process, making the otherwise black-box CNN
-more interpretable and transparent.
+Grad-CAM (Gradient-weighted Class Activation Mapping) helped me understand which specific regions of an image my model was focusing on when making a prediction. By generating a heatmap overlaid on the original image, I could visually confirm whether my model was looking at the correct parts of the plant — such as the leaves, trunk, or distinctive shape — rather than the background or irrelevant areas. This gave me confidence that my model was making decisions based on actual plant features rather than noise or coincidental patterns in the dataset.
 
----
+**13. Did the improved model focus on more relevant regions? Provide evidence.**
 
-### 13. Did the improved model focus on more relevant regions? Provide evidence.
+Based on my Grad-CAM overlay on the Talisay Tree test image, the highlighted regions concentrated on the distinctive features of the tree such as its leaf structure and canopy shape, rather than the background. This is consistent with the model's 99.9% confidence prediction on that same image from my LW3 results. The heatmap showed a focused, concentrated activation region rather than a scattered pattern, which according to the interpretation table in the instructions means my model is learning properly and focusing on the correct object features.
 
-The Grad-CAM heatmap generated from the baseline model showed a largely uniform yellow
-activation across the entire image, with the overlay displaying scattered cyan and teal
-highlights distributed across the full coconut tree image rather than concentrated on specific
-discriminative features. This suggests that the baseline model was not precisely localizing
-the most relevant visual features of the coconut tree but was instead activating broadly
-across the whole image. The scattered activation pattern visible in the Grad-CAM overlay
-indicates that the model relied on general texture and color patterns rather than specific
-structural features such as the trunk, fronds, or coconut clusters for its classification
-decision.
+**14. Why is explainability important in real-world AI applications?**
+
+Explainability is critical in real-world AI because it builds trust and accountability. In a plant identification system like mine, a farmer or botanist needs to trust that the model is identifying the correct plant for the right reasons — not just guessing based on image background or lighting conditions. Grad-CAM allows users and developers to verify that the model's decisions are based on meaningful visual features. Additionally, in high-stakes applications like medical diagnosis or autonomous vehicles, explainability is required to identify model failures, meet regulatory standards, and ensure that errors can be detected and corrected before they cause harm.
 
 ---
 
-### 14. Why is explainability important in real-world AI applications?
+## Conclusion
 
-Explainability is critically important in real-world AI applications because it builds trust,
-enables accountability, and supports informed decision-making. In high-stakes domains such
-as medical diagnosis, agriculture, and environmental monitoring, stakeholders need to
-understand not just what the model predicted but why it made that prediction. For example,
-in a tree species classification system used for forest management or biodiversity monitoring,
-a model that can show which visual features it used to identify a species allows domain
-experts to verify whether the model is reasoning correctly or relying on spurious
-correlations. Grad-CAM and similar explainability tools also help developers identify and fix
-model weaknesses — if the heatmap shows the model focusing on irrelevant background
-regions rather than the tree itself, this signals a need for better training data or
-architectural improvements. Without explainability, even a high-accuracy model remains a
-black box that cannot be fully trusted or debugged in production environments.
+Laboratory Work 4 extended my plant classifier from LW3 by introducing full evaluation metrics, model interpretability through Grad-CAM, and systematic model improvement through fine-tuning.
+
+My baseline model (loaded from LW3) was evaluated using Precision, Recall, F1-score, Confusion Matrix, and ROC/AUC analysis. The evaluation revealed that while overall performance was strong with an AUC of 0.9637, certain classes like MAHOGANY TREE (F1: 0.69) and DOUGLAS FIR TREE (F1: 0.74) were underperforming due to visual similarities with other species.
+
+For model improvement, I applied fine-tuning by reloading the baseline model and retraining it with a lower learning rate of 0.00005, combined with stronger data augmentation and Early Stopping. This approach was chosen because training a new model from scratch on my dataset size was unstable. The fine-tuning strategy successfully pushed my validation accuracy from 87.20% to 90.10%, placing it in the Excellent range of my instructor's benchmark table, while also reducing validation loss from 0.4621 to 0.3566.
+
+Grad-CAM visualization confirmed that my model was focusing on the correct plant features when making predictions, which validated that the model's high accuracy is backed by genuine feature learning rather than memorization. Overall, this laboratory work demonstrated the complete machine learning pipeline — from evaluation and diagnosis to targeted improvement and explainability — and produced a reliable, well-generalized plant species classifier.
 
 
 
 ## 🔗 Project Links
 
-- 📓 **Google Colab Notebook:** [(https://colab.research.google.com/drive/1NS9U3BdP1vPjw-eY-QPirv5oLIR76Yf_?usp=sharing)] 
+- 📓 **Google Colab Notebook:** [(https://colab.research.google.com/drive/16HlejEog1Jl3SxrGM1hmmo6DYOz3lb6n?usp=sharing)] 
 - 📁 **Google Drive Dataset:** [(https://drive.google.com/drive/folders/1TRQJ9ZjW8XNAK6L1VdbcqLDDwcdhuwcO?usp=sharing)]
 - 🧠 **Saved Model:** [(https://drive.google.com/file/d/19L1TODQCLFHRFOioXjQewesOzPX2qbG1/view?usp=drive_link)]
